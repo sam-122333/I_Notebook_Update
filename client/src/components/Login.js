@@ -10,16 +10,20 @@ const Login = (props) => {
       method: "POST",
       headers: {
         "content-type": "application/json",
+        secure: true,
+        httpOnly: true,
+        withCredentials: true,
+        sameSite: "lax",
       },
+      credentials: "include",
       body: JSON.stringify({
         email: userDetails.email,
         password: userDetails.password,
       }),
     });
     const json = await response.json();
-    console.log(json);
+    // console.log(json);
     if (json.success) {
-      localStorage.setItem("token", json.jwtToken);
       history("/home");
       props.showAlert("Congrats! you are logged in successfully", "success");
     } else {

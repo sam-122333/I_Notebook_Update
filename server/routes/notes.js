@@ -11,36 +11,22 @@ router.get("/fetchallnotes", fetchuser, async (req, res) => {
 });
 
 // ROUTE 2 :Add a new notes using :POST "/api/auth/addnote" Login required
-router.post(
-  "/addnote",
-  fetchuser,
-  [
-    body("title", "please enter minimum 3 character").isLength({ min: 3 }),
-    body("description", "please enter minimum 3 character").isLength({
-      min: 6,
-    }),
-  ],
-  async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        res.status(402).json({ errors: errors.array() });
-      }
-      const { title, description, tag } = req.body;
-      const note = await Notes.create({
-        title,
-        description,
-        tag,
-        user: req.user.id,
-      });
-      res.json(note);
-    } catch (error) {
-      res
-        .status(404)
-        .json({ error: "internal server error", message: error.message });
-    }
+router.post("/addnote", fetchuser, async (req, res) => {
+  try {
+    const { title, description, tag } = req.body;
+    const note = await Notes.create({
+      title,
+      description,
+      tag,
+      user: req.userId,
+    });
+    res.json(note);
+  } catch (error) {
+    res
+      .status(404)
+      .json({ error: "internal server error", message: error.message });
   }
-);
+});
 
 // ROUTE 3 :Update an existing notes using :PUT "/api/notes/updatenote" Login required
 router.put("/updatenote/:id", fetchuser, async (req, res) => {

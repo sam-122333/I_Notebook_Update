@@ -46,35 +46,25 @@ const Navbar = (props) => {
               </li>
             </ul>
 
-            {localStorage.getItem("token") ? (
-              <form className="d-flex">
-                <Link
-                  onClick={logout}
-                  type="button"
-                  className="btn btn-primary mx-2"
-                  to="/login"
-                >
-                  Logout
-                </Link>
-              </form>
-            ) : (
-              <form action="" className="d-flex">
-                <Link
-                  type="button"
-                  className="btn btn-primary mx-2"
-                  to="/signup"
-                >
-                  Sign Up
-                </Link>
-                <Link
-                  type="button"
-                  className="btn btn-primary mx-2"
-                  to="/login"
-                >
-                  Login
-                </Link>
-              </form>
-            )}
+            <form className="d-flex">
+              <Link
+                onClick={logout}
+                type="button"
+                className="btn btn-primary mx-2"
+                to="/login"
+              >
+                Logout
+              </Link>
+            </form>
+
+            <form action="" className="d-flex">
+              <Link type="button" className="btn btn-primary mx-2" to="/signup">
+                Sign Up
+              </Link>
+              <Link type="button" className="btn btn-primary mx-2" to="/login">
+                Login
+              </Link>
+            </form>
           </div>
         </div>
       </nav>

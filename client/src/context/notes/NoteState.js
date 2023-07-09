@@ -28,12 +28,11 @@ const NoteState = (props) => {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "auth-token": localStorage.getItem("token"),
       },
       body: JSON.stringify({ title, description, tag }),
     });
     let note = await response.json();
-    // console.log(note);
+    console.log(note);
 
     setNotes(notes.concat(note));
     // console.log(notes);

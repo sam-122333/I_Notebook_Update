@@ -1,112 +1,100 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
-// const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const JWT_KEY = "sameer";
 const fetchuser = require("../middleware/fetchuser");
 
 // ROUTE 1 :creating a user using :POST "/api/auth/createuser" no login required
-router.post(
-  "/createuser",
-  // [
-  //   body("name", "please enter minimum 3 character").isLength({ min: 3 }),
-  //   body("email", "please enter a valid email").isEmail(),
-  //   body("password", "please enter minimum 6 character").isLength({ min: 6 }),
-  // ],
-  async (req, res) => {
-    // console.log(req.header);
-    let success = false;
-    // const errors = validationResult(req);
-    // console.log(errors.isEmpty());
-    // if (!errors.isEmpty()) {
-    //   res.status(400).json({ success, errors: errors.array() });
-    // }
-    // res.send(req.body);
-    // console.log(req.body);
+router.post("/createuser", async (req, res) => {
+  let success = false;
+  //checking user's email is already exist or not\
+  try {
+    const { name, email, password, cpassword } = req.body;
+    if (!name || !email || !password || !cpassword) {
+      return res.status(400).json({ message: "Please fill all fields" });
+    }
 
-    //checking user's email is exist or not\
-    try {
-      let user = await User.findOne({ email: req.body.email });
-      console.log(user, "after");
-      if (user) {
-        return res
-          .status(400)
-          .json({ success, error: "this email is already exist" });
-      }
+    let userExist = await User.findOne({ email: req.body.email });
+    if (userExist) {
+      return res
+        .status(400)
+        .json({ success, message: "this email is already exist" });
+    } else if (password !== cpassword) {
+      return res.status(402).json({ message: "Password doesn't match" });
+    } else {
       success = true;
-      const salt = await bcrypt.genSalt(10);
-      let secPass = await bcrypt.hash(req.body.password, salt);
-
       //create a new user
       const createuser = await User.create({
         name: req.body.name,
-        password: secPass,
         email: req.body.email,
+        password: req.body.password,
+        cpassword: req.body.cpassword,
       });
       success = true;
       res.json({ success, createuser });
-    } catch (error) {
-      console.log(error.message);
-      res.status(500).send("some error happen");
     }
-
-    // const user = new User(req.body);
-    // user.save();
-    // res.send(req.body);
-    // res.json({ message: "success", file: "auth" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("some error happen");
   }
-);
+});
 
 //ROUTE 2 : authenticate a user using :POST "/api/auth/login" no login required
-router.post(
-  "/login",
-  // [
-  //   body("email", "please enter a valid email").isEmail(),
-  //   body("password", "please enter minimum 3 character").isLength({ min: 6 }),
-  // ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    let success = false;
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-    }
+
+router.post("/login", async (req, res) => {
+  let success = false;
+
+  try {
     const { email, password } = req.body;
-    try {
-      let user = await User.findOne({ email });
-      if (!user) {
-        return res.status(404).json({ error: "sorry user doesn't exist" });
-      }
-      const passwordCompare = await bcrypt.compare(password, user.password);
+    if (!email || !password) {
+      return res.status(400).json({ message: "Please fill all fields" });
+    }
+    let userExist = await User.findOne({ email });
+    if (userExist) {
+      const passwordCompare = await bcrypt.compare(
+        password,
+        userExist.password
+      );
       if (!passwordCompare) {
         return res
           .status(404)
           .json({ error: "please enter the correct password" });
+      } else {
+        success = true;
+        const token = jwt.sign(
+          { _id: userExist._id, email: userExist.email },
+          JWT_KEY
+        );
+        res
+          .cookie("token", token, {
+            expires: new Date(Date.now() + 2000000000),
+            httpOnly: true,
+            secure: true,
+          })
+          .status(201)
+          .json({ success, token });
       }
-      console.log(user.id, user.email);
-      const data = { user: { id: user.id } };
-      const jwtToken = jwt.sign(data, JWT_KEY);
-      console.log(passwordCompare, "data");
-      success = true;
-      res.status(200).json({ success, jwtToken });
-    } catch (error) {
-      res
-        .status(404)
-        .json({ error: "internal server error", message: error.message });
+    } else {
+      return res.status(404).json({ error: "sorry user doesn't exist" });
     }
-  }
-);
-//ROUTE 3 : authenticate a user using :POST "/api/auth/getuser". Login required
-router.post("/getuser", fetchuser, async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const user = await User.findById(userId).select("-password");
-    res.send(user);
   } catch (error) {
     res
       .status(404)
       .json({ error: "internal server error", message: error.message });
   }
 });
+
+//ROUTE 3 : authenticate a user using :POST "/api/auth/getuser". Login required
+// router.post("/getuser", fetchuser, async (req, res) => {
+//   console.log("getuser working");
+//   try {
+//     res.send(req.rootUser);
+//   } catch (error) {
+//     res
+//       .status(404)
+//       .json({ error: "internal server error", message: error.message });
+//   }
+// });
 module.exports = router;
