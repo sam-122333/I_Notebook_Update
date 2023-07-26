@@ -11,22 +11,34 @@ const NoteItems = (props) => {
           <small>S.N.- {index + 1}</small>
           <div className="d-flex align-items-center">
             <h5 className="card-title">{note.title}</h5>
-            <i
-              className="fa-solid fa-trash mx-2 "
+          </div>
+          <h6 className="card-title">{note.tag}</h6>
+          <p className="card-text">{note.description}</p>
+          <div
+            className="btn-group btn-group-sm"
+            role="group"
+            aria-label="Small button group"
+          >
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={() => {
+                updateNote(note);
+              }}
+            >
+              edit
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-primary"
               onClick={() => {
                 deleteNote(note._id);
                 props.showAlert("Your note is delete successfully", "success");
               }}
-            ></i>
-            <i
-              className="fa-light fa-pen-to-square"
-              onClick={() => {
-                updateNote(note);
-              }}
-            ></i>
+            >
+              delete
+            </button>
           </div>
-          <h6 className="card-title">{note.tag}</h6>
-          <p className="card-text">{note.description}</p>
         </div>
       </div>
     </div>

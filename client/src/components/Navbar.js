@@ -1,10 +1,22 @@
-import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import noteContext from "../context/notes/noteContext";
+import { useContext } from "react";
 
 const Navbar = (props) => {
-  const logout = () => {
+  const context = useContext(noteContext);
+  const { loginLogoutSwitch, setLoginLogoutSwitch } = context;
+  const logout = async () => {
+    await fetch("/api/auth/logout", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "content-type": "application/json",
+      },
+      credentials: "include",
+    });
     props.showAlert("you have been logged out successfully", "success");
-    localStorage.removeItem("token");
+    localStorage.removeItem("loginLogoutSwitch");
+    setLoginLogoutSwitch(false);
   };
   let location = useLocation();
   return (
@@ -46,25 +58,35 @@ const Navbar = (props) => {
               </li>
             </ul>
 
-            <form className="d-flex">
-              <Link
-                onClick={logout}
-                type="button"
-                className="btn btn-primary mx-2"
-                to="/login"
-              >
-                Logout
-              </Link>
-            </form>
-
-            <form action="" className="d-flex">
-              <Link type="button" className="btn btn-primary mx-2" to="/signup">
-                Sign Up
-              </Link>
-              <Link type="button" className="btn btn-primary mx-2" to="/login">
-                Login
-              </Link>
-            </form>
+            {loginLogoutSwitch ? (
+              <form className="d-flex">
+                <Link
+                  onClick={logout}
+                  type="button"
+                  className="btn btn-primary mx-2"
+                  to="/login"
+                >
+                  Logout
+                </Link>
+              </form>
+            ) : (
+              <form action="" className="d-flex">
+                <Link
+                  type="button"
+                  className="btn btn-primary mx-2"
+                  to="/signup"
+                >
+                  Sign Up
+                </Link>
+                <Link
+                  type="button"
+                  className="btn btn-primary mx-2"
+                  to="/login"
+                >
+                  Login
+                </Link>
+              </form>
+            )}
           </div>
         </div>
       </nav>

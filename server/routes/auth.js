@@ -86,6 +86,12 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/logout", (req, res) => {
+  console.log("logout page working");
+  res.clearCookie("token");
+  res.status(200).json({ success: true });
+});
+
 //ROUTE 3 : authenticate a user using :POST "/api/auth/getuser". Login required
 // router.post("/getuser", fetchuser, async (req, res) => {
 //   console.log("getuser working");

@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 
 mongoose.set("strictQuery", true);
-const DB =
-  "mongodb+srv://mdsameer122333:Md%26%40meer2@cluster0.ueaykrg.mongodb.net/?retryWrites=true&w=majority";
+const DB = process.env.DATABASE;
 mongoose
   .connect(DB, {
     // useNewUrlParser: true,

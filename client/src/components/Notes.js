@@ -7,11 +7,14 @@ import AddNote from "./AddNote";
 const Notes = (props) => {
   // const history = useNavigate();
   const context = useContext(noteContext);
-  const { notes, getNotes, editNote } = context;
+  const { notes, getNotes, editNote, loginLogoutSwitch } = context;
   useEffect(() => {
-    if (localStorage.getItem("token")) {
+    if (loginLogoutSwitch) {
       getNotes();
-    } // eslint-disable-next-line
+      console.log("helo print");
+    }
+
+    // eslint-disable-next-line
   }, []);
   const ref = useRef(null);
   const refClose = useRef(null);

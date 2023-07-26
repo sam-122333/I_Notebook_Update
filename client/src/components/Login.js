@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import noteContext from "../context/notes/noteContext";
 
 const Login = (props) => {
+  const context = useContext(noteContext);
+  const { setLoginLogoutSwitch } = context;
   const [userDetails, setUserDetails] = useState({ email: "", password: "" });
   let history = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:7000/api/auth/login", {
+    const { email, password } = userDetails;
+    const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -17,13 +21,15 @@ const Login = (props) => {
       },
       credentials: "include",
       body: JSON.stringify({
-        email: userDetails.email,
-        password: userDetails.password,
+        email,
+        password,
       }),
     });
     const json = await response.json();
     // console.log(json);
     if (json.success) {
+      localStorage.setItem("loginLogoutSwitch", "true");
+      setLoginLogoutSwitch(true);
       history("/home");
       props.showAlert("Congrats! you are logged in successfully", "success");
     } else {

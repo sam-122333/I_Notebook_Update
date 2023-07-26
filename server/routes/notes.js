@@ -6,7 +6,7 @@ const Notes = require("../models/Notes");
 
 // ROUTE 1 :get all the notes using :GET "/api/auth/fetchallnotes" Login required
 router.get("/fetchallnotes", fetchuser, async (req, res) => {
-  const notes = await Notes.find({ user: req.user.id });
+  const notes = await Notes.find({ user: req.rootUser._id });
   res.json(notes);
 });
 
@@ -44,11 +44,13 @@ router.put("/updatenote/:id", fetchuser, async (req, res) => {
       newNote.tag = tag;
     }
     // find the note to updated and update it
-    let note = await Notes.findById(req.params.id);
+    const noteId = req.params.id;
+    let note = await Notes.findById(noteId);
+    // Check if the note exists
     if (!note) {
-      return res.status(404).send("not found");
+      return res.status(404).send("Note not found");
     }
-    if (note.user.toString() !== req.user.id) {
+    if (note.user.toString() !== req.userId) {
       return res.status(401).send("not allow");
     }
     note = await Notes.findByIdAndUpdate(
@@ -69,15 +71,17 @@ router.put("/updatenote/:id", fetchuser, async (req, res) => {
 router.delete("/deletenotes/:id", fetchuser, async (req, res) => {
   try {
     // const { title, description, tag } = req.body;
-    // finding the note for delete.
-    let note = await Notes.findById(req.params.id);
+    // Finding the note for delete.
+    const noteId = req.params.id;
+    let note = await Notes.findById(noteId);
+    // Check if the note exists
     if (!note) {
-      return res.status(404).send("not found");
+      return res.status(404).send("Note not found");
     }
 
-    //verifying the user
-    if (note.user.toString() !== req.user.id) {
-      return res.status(401).send("not allow");
+    // Verifying the user
+    if (note.user.toString() !== req.userId) {
+      return res.status(401).send("Not allowed to delete this note");
     }
 
     note = await Notes.findByIdAndDelete(req.params.id);

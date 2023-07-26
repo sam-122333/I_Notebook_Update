@@ -21,6 +21,7 @@ const fetchuser = async (req, res, next) => {
     req.userId = rootUser.id;
     next();
   } catch (error) {
+    console.log(req.cookies.token);
     res.status(401).send({
       error: "please authenticate using a valid token2",
       message: error.message,

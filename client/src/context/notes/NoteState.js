@@ -5,6 +5,10 @@ const NoteState = (props) => {
   const host = "http://localhost:7000";
   const notesInitial = [];
   const [notes, setNotes] = useState(notesInitial);
+  const [loginLogoutSwitch, setLoginLogoutSwitch] = useState(() => {
+    const switchValue = localStorage.getItem("loginLogoutSwitch");
+    return switchValue === "true";
+  });
 
   //get all note
   const getNotes = async () => {
@@ -13,11 +17,11 @@ const NoteState = (props) => {
       method: "GET",
       headers: {
         "content-type": "application/json",
-        "auth-token": localStorage.getItem("token"),
       },
+      credentials: "include",
     });
     const json = await response.json();
-    console.log(json);
+    // console.log(json, "helo");
     setNotes(json);
   };
 
@@ -27,8 +31,10 @@ const NoteState = (props) => {
     const response = await fetch(`${host}/api/notes/addnote`, {
       method: "POST",
       headers: {
+        Accept: "application/json",
         "content-type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({ title, description, tag }),
     });
     let note = await response.json();
@@ -45,14 +51,14 @@ const NoteState = (props) => {
       method: "DELETE",
       headers: {
         "content-type": "application/json",
-        "auth-token": localStorage.getItem("token"),
       },
+      credentials: "include",
     });
     const newNote = notes.filter((note) => {
       return note._id !== id;
     });
     setNotes(newNote);
-
+    
     // console.log(newNote);
   };
 
@@ -65,6 +71,7 @@ const NoteState = (props) => {
         "content-type": "application/json",
         "auth-token": localStorage.getItem("token"),
       },
+      credentials: "include",
       body: JSON.stringify({ title, description, tag }),
     });
 
@@ -84,7 +91,15 @@ const NoteState = (props) => {
 
   return (
     <noteContext.Provider
-      value={{ notes, addNote, deleteNote, editNote, getNotes }}
+      value={{
+        notes,
+        loginLogoutSwitch,
+        addNote,
+        deleteNote,
+        editNote,
+        getNotes,
+        setLoginLogoutSwitch,
+      }}
     >
       {props.children}
     </noteContext.Provider>
