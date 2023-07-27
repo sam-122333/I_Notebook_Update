@@ -3,7 +3,7 @@ import noteContext from "../context/notes/noteContext";
 
 const AddNote = (props) => {
   const context = useContext(noteContext);
-  const { addNote } = context;
+  const { addNote, loginLogoutSwitch } = context;
   const [note, setNote] = useState({
     title: "",
     description: "",
@@ -11,9 +11,14 @@ const AddNote = (props) => {
   });
   const handleClick = (e) => {
     e.preventDefault();
-    addNote(note.title, note.description, note.tag);
-    setNote({ title: "", description: "", tag: "" });
-    props.showAlert("Your note is added successfully", "success");
+    if (loginLogoutSwitch) {
+      addNote(note.title, note.description, note.tag);
+      setNote({ title: "", description: "", tag: "" });
+      props.showAlert("Your note is added successfully", "success");
+    } else {
+      setNote({ title: "", description: "", tag: "" });
+      props.showAlert("Your have to login first to save your note", "danger");
+    }
   };
   const onChange = (e) => {
     setNote({ ...note, [e.target.name]: e.target.value });

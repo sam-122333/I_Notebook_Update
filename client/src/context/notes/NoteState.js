@@ -2,7 +2,6 @@ import noteContext from "./noteContext";
 import { useState } from "react";
 
 const NoteState = (props) => {
-  const host = "http://localhost:7000";
   const notesInitial = [];
   const [notes, setNotes] = useState(notesInitial);
   const [loginLogoutSwitch, setLoginLogoutSwitch] = useState(() => {
@@ -13,7 +12,7 @@ const NoteState = (props) => {
   //get all note
   const getNotes = async () => {
     // API Call
-    const response = await fetch(`${host}/api/notes/fetchallnotes`, {
+    const response = await fetch(`/api/notes/fetchallnotes`, {
       method: "GET",
       headers: {
         "content-type": "application/json",
@@ -21,14 +20,13 @@ const NoteState = (props) => {
       credentials: "include",
     });
     const json = await response.json();
-    // console.log(json, "helo");
     setNotes(json);
   };
 
   //Add a note
   const addNote = async (title, description, tag) => {
     // API Call
-    const response = await fetch(`${host}/api/notes/addnote`, {
+    const response = await fetch(`/api/notes/addnote`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -38,7 +36,7 @@ const NoteState = (props) => {
       body: JSON.stringify({ title, description, tag }),
     });
     let note = await response.json();
-    console.log(note);
+    // console.log(note);
 
     setNotes(notes.concat(note));
     // console.log(notes);
@@ -47,7 +45,7 @@ const NoteState = (props) => {
   // Delete a note
   const deleteNote = async (id) => {
     // API Call
-    await fetch(`${host}/api/notes/deletenotes/${id}`, {
+    await fetch(`/api/notes/deletenotes/${id}`, {
       method: "DELETE",
       headers: {
         "content-type": "application/json",
@@ -58,14 +56,14 @@ const NoteState = (props) => {
       return note._id !== id;
     });
     setNotes(newNote);
-    
+
     // console.log(newNote);
   };
 
   // Edit a note
   const editNote = async (id, title, description, tag) => {
     // API Call
-    await fetch(`${host}/api/notes/updatenote/${id}`, {
+    await fetch(`/api/notes/updatenote/${id}`, {
       method: "PUT",
       headers: {
         "content-type": "application/json",

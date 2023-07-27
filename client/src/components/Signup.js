@@ -12,7 +12,7 @@ const Signup = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { name, email, password, cpassword } = userDetails;
-    const response = await fetch("http://localhost:7000/api/auth/createuser", {
+    const response = await fetch("/api/auth/createuser", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -25,7 +25,7 @@ const Signup = (props) => {
       }),
     });
     const json = await response.json();
-    console.log(json);
+    // console.log(json);
     if (json.success) {
       history("/login");
       props.showAlert("Congrats! you are signup successfully", "success");

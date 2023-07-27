@@ -36,7 +36,7 @@ router.post("/createuser", async (req, res) => {
       res.json({ success, createuser });
     }
   } catch (error) {
-    console.log(error.message);
+    // console.log(error.message);
     res.status(500).send("some error happen");
   }
 });
@@ -87,7 +87,7 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
-  console.log("logout page working");
+  // console.log("logout page working");
   res.clearCookie("token");
   res.status(200).json({ success: true });
 });

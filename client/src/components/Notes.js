@@ -11,10 +11,7 @@ const Notes = (props) => {
   useEffect(() => {
     if (loginLogoutSwitch) {
       getNotes();
-      console.log("helo print");
-    }
-
-    // eslint-disable-next-line
+    } // eslint-disable-next-line
   }, []);
   const ref = useRef(null);
   const refClose = useRef(null);

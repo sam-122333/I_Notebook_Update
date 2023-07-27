@@ -10,10 +10,21 @@ const NoteItems = (props) => {
         <div className="card-body">
           <small>S.N.- {index + 1}</small>
           <div className="d-flex align-items-center">
-            <h5 className="card-title">{note.title}</h5>
+            <h5 className="card-title">
+              <span style={{ color: "red", fontWeight: "bold" }}>Title:-</span>{" "}
+              {note.title}
+            </h5>
           </div>
-          <h6 className="card-title">{note.tag}</h6>
-          <p className="card-text">{note.description}</p>
+          <h6 className="card-title">
+            <span style={{ color: "red", fontWeight: "bold" }}>Tag:-</span>{" "}
+            {note.tag}
+          </h6>
+          <p className="card-text">
+            <span style={{ color: "red", fontWeight: "bold" }}>
+              Description:-
+            </span>{" "}
+            {note.description}
+          </p>
           <div
             className="btn-group btn-group-sm"
             role="group"
