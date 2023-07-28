@@ -30,7 +30,7 @@ const Signup = (props) => {
       history("/login");
       props.showAlert("Congrats! you are signup successfully", "success");
     } else {
-      props.showAlert("Please fill all fields", "danger");
+      props.showAlert(json.message, "danger");
     }
   };
   const onChange = (e) => {
